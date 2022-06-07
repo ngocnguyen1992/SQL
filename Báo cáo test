@@ -3,7 +3,7 @@ use testnew
 go
 create table khachhang
 	(
-		makh varchar(8) primary key constraint auto_idkh default dbo.idkh(),
+		makh varchar(8) primary key
 		hoten nvarchar(128) not null,
 		dchi nvarchar(256),
 		sodt varchar (16) not null,
