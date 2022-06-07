@@ -25,7 +25,6 @@ create table sanpham
 		dvt varchar(24),
 		nuocsx varchar (64),
 		gia money
-
 	)
 create table hoadon
 	(
@@ -61,6 +60,7 @@ else
 			end 
 			return @idkh
 end
+
 create proc makh_auto
 as
 begin 
@@ -73,6 +73,7 @@ end
 
 Alter table dbo.khachhang drop constraint auto_idkh
 alter table dbo.khachhang add constraint makh_auto default makh_auto
+
 exec makh_auto
 insert into dbo.khachhang(hoten, dchi,sodt,ngaysinh,doanhso,ngdk)
 values(N'Ngọc Nguyễn', N'địa chỉ', '0933550310', '19920914', '100000000', '20220604')
