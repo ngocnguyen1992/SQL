@@ -1,0 +1,80 @@
+create database testnew
+use testnew
+go
+create table khachhang
+	(
+		makh varchar(8) primary key constraint auto_idkh default dbo.idkh(),
+		hoten nvarchar(128) not null,
+		dchi nvarchar(256),
+		sodt varchar (16) not null,
+		ngaysinh date,
+		doanhso numeric,
+		ngdk date
+	)
+create table nhanvien
+	(
+		manv varchar(8) primary key,
+		hoten nvarchar (128),
+		ngvl date,
+		sodt varchar (16)
+	)
+create table sanpham
+	(
+		masp varchar (8) primary key,
+		tensp varchar(64),
+		dvt varchar(24),
+		nuocsx varchar (64),
+		gia money
+
+	)
+create table hoadon
+	(
+		sohd int not null,
+		ngmh datetime,
+		makh varchar (8)
+		foreign key(makh) references dbo.khachhang(makh),
+		manv varchar (8)
+		foreign key(manv) references dbo.nhanvien(manv),
+		sl int,
+		giatri money
+	)
+
+	alter table dbo.sanpham add ghichu varchar(64)
+	go
+	alter table dbo.sanpham alter column ghichu varchar(128)
+
+
+
+
+create function idkh()
+returns varchar (8)
+as
+begin
+	declare @idkh varchar(8)
+	if(select count (makh) from khachhang) = 0
+		set @idkh = '0'
+else 
+		select @idkh = max(right (makh,3)) from khachhang
+		select @idkh = case 
+			when @idkh >= 0 and @idkh < 0 then 'KH00' + CONVERT (varchar, convert (int, @idkh)+1)
+			WHEN @idkh >= 9 THEN 'KH0' + CONVERT(varchar, CONVERT(INT, @idkh) + 1)
+			end 
+			return @idkh
+end
+create proc makh_auto
+as
+begin 
+declare @id_auto varchar(8)
+declare @max int
+select @max = count(makh) + 1 from dbo.khachhang where makh like 'KH'
+set @id_auto = 'KH' + right ('0' + cast (@max as varchar (6)),6)
+end
+
+
+Alter table dbo.khachhang drop constraint auto_idkh
+alter table dbo.khachhang add constraint makh_auto default makh_auto
+exec makh_auto
+insert into dbo.khachhang(hoten, dchi,sodt,ngaysinh,doanhso,ngdk)
+values(N'Ngọc Nguyễn', N'địa chỉ', '0933550310', '19920914', '100000000', '20220604')
+
+
