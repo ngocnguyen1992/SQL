@@ -1,0 +1,89 @@
+	create database testnew
+	use testnew
+	go
+	create table khachhang
+		(	id int identity not null,
+			id_kh varchar(8) not null,
+			name nvarchar(128) not null,
+			addr nvarchar(256),
+			phone varchar (16) not null,
+			brith date,
+			sales numeric,
+			register date,
+			primary key(id, id_kh)
+		)
+	create table nhanvien
+		(
+			id_nv varchar(8) primary key,
+			name nvarchar (128),
+			ngvl date,
+			phone varchar (16)
+		)
+	create table sanpham
+		(
+			id_prod varchar (8) primary key,
+			name_prod varchar(64),
+			unit varchar(24),
+			nation varchar (64),
+			price money
+		)
+	create table hoadon
+		(
+			id_hd int not null,
+			purchase_date datetime,
+			id_kh varchar (8)
+			foreign key(makh) references dbo.khachhang(makh),
+			id_nv varchar (8)
+			foreign key(manv) references dbo.nhanvien(manv),
+			amount int,
+			value money
+		)
+
+	create function idkh()
+	returns varchar (8)
+	as
+	begin
+		declare @idkh varchar(8)
+		if(select count (makh) from khachhang) = 0
+			set @idkh = '0'
+	else 
+			select @idkh = max(right (makh,3)) from khachhang
+			select @idkh = case 
+				when @idkh >= 0 and @idkh < 0 then 'KH00' + CONVERT (varchar, convert (int, @idkh)+1)
+				WHEN @idkh >= 9 THEN 'KH0' + CONVERT(varchar, CONVERT(INT, @idkh) + 1)
+				end 
+				return @idkh
+	end
+	create proc makh_auto
+	as
+	begin 
+	declare @id_auto varchar(8)
+	declare @max int
+	select @max = count(makh) + 1 from dbo.khachhang where makh like 'KH'
+	set @id_auto = 'KH' + right ('0' + cast (@max as varchar (6)),6)
+	insert into dbo.khachhang(makh) values(@id_auto)
+	end
+
+	Alter table dbo.khachhang drop constraint auto_idkh
+	alter table dbo.khachhang add constraint makh_auto default makh_auto
+	alter table dbo.khachhang add id int set identity
+	alter table dbo.khachhang drop column id
+	drop table dbo.khachhang
+
+	create trigger auto_id on dbo.khachhang after Insert as
+	begin
+		update dbo.khachhang set id_kh = 'KH' + format(id,'#####') where id_kh = id_kh
+	end
+
+	drop trigger auto_id
+
+	alter 
+	ALTER TABLE dbo.khachhang ADD CONSTRAINT id PRIMARY KEY (id)
+	exec dbo.makh_auto
+	select * from dbo.idkh as idkh
+
+	insert into dbo.khachhang
+	values('', N' Nguyễn', N'địa chỉ nè', '0933550310', '19920914', '100000000', '20220604')
+	delete from dbo.khachhang where id < 3
+
+	drop database testnew
