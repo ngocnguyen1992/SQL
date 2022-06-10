@@ -42,21 +42,21 @@ ON dbo.customer
 FOR UPDATE
 AS
 begin
-	   DECLARE @res_date DATETIME, 
-	   @pur_date DATETIME
-
-		SELECT @res_date=register_date
-		FROM  INSERTED
+	DECLARE @res_date DATETIME, 
+	@pur_date DATETIME
+	SELECT @res_date=register_date
+	FROM  INSERTED
  
-	IF(@res_date>ANY(SELECT pucharse_date
-		FROM  sales_management S, inserted I
-		WHERE S.id_cus=I.id_cus))
+	IF
+	(@res_date>ANY(SELECT pucharse_date
+	FROM  sales_management S, inserted I
+	WHERE S.id_cus=I.id_cus))
 BEGIN
-	   ROLLBACK
-	   PRINT 'ERROR!!!'
+	ROLLBACK
+	PRINT 'ERROR!!!'
 END
 	ELSE
-	   PRINT'SUCCESSFUL'
+	PRINT'SUCCESSFUL'
 end
 
 
