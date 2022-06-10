@@ -21,24 +21,6 @@
 			unit_price money,
 			pucharse_date DATETIME NOT NULL DEFAULT(GETDATE())
 		)
-	/*create table nhanvien
-		(
-			id_nv varchar(8) primary key,
-			name nvarchar (128),
-			ngvl date,
-			phone varchar (16)
-		)
-	create table hoadon
-		(
-			id_hd int not null,
-			purchase_date datetime,
-			id_kh varchar (8)
-			foreign key(makh) references dbo.khachhang(makh),
-			id_nv varchar (8),
-			foreign key(manv) references dbo.nhanvien(manv),
-			amount int,
-			value money
-		)*/
 
 
 	create trigger auto_id on dbo.customer after Insert as
@@ -78,20 +60,5 @@ END
 end
 
 
-	insert dbo.sales_management
+	insert dbo.sales_management(id_prod,prod,nation,unit_price)
 	values('','iphone12_64gb','LL/A','16190000')
-
-	
-	
-	
-
-
-
-	alter table sales_management drop foreign key id_cus
-	alter table dbo.sales_management alter column pucharse_date DATETIME NOT NULL DEFAULT(GETDATE())
-	delete from dbo.sales_management where column = 'pucharse_date'
-	drop trigger DK_date
-	alter table dbo.sales_management drop column pucharse_date
-	drop database testnew
-	drop table sales_management
-	drop trigger auto_id
