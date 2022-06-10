@@ -38,8 +38,8 @@
 			foreign key(manv) references dbo.nhanvien(manv),
 			amount int,
 			value money
-		)
-*/
+		)*/
+
 
 	create trigger auto_id on dbo.customer after Insert as
 	begin
