@@ -1,0 +1,97 @@
+	create database testnew
+	use testnew
+	go
+	create table customer
+		(	
+			id int identity not null,
+			id_cus varchar(8) not null primary key,
+			name nvarchar(128) not null,
+			addr nvarchar(256),
+			phone varchar (16) not null,
+			mail varchar(32),
+			brith_date date,
+			register_date date,
+		)
+	create table sales_management
+		(
+			id int identity not null,
+			id_prod varchar (8) not null primary key,
+			prod varchar(64),
+			nation varchar (64),
+			unit_price money,
+			pucharse_date DATETIME NOT NULL DEFAULT(GETDATE())
+		)
+	/*create table nhanvien
+		(
+			id_nv varchar(8) primary key,
+			name nvarchar (128),
+			ngvl date,
+			phone varchar (16)
+		)
+	create table hoadon
+		(
+			id_hd int not null,
+			purchase_date datetime,
+			id_kh varchar (8)
+			foreign key(makh) references dbo.khachhang(makh),
+			id_nv varchar (8),
+			foreign key(manv) references dbo.nhanvien(manv),
+			amount int,
+			value money
+		)
+*/
+
+	create trigger auto_id on dbo.customer after Insert as
+	begin
+		declare @_id int
+		select top 1 @_id = id from inserted  
+		update dbo.khachhang set id_cus = 'KH' + format(id,'#####') where id = @_id
+	end
+
+	create trigger auto_id_prod on dbo.sales_management after Insert as
+	begin
+		declare @_id int
+		select top 1 @_id = id from inserted  
+		update dbo.sales_management set id_prod = 'SP' + format(id,'#####') where id = @_id
+	end	
+
+CREATE TRIGGER DK_date
+ON dbo.customer
+FOR UPDATE
+AS
+begin
+	   DECLARE @res_date DATETIME, 
+	   @pur_date DATETIME
+
+		SELECT @res_date=register_date
+		FROM  INSERTED
+ 
+	IF(@res_date>ANY(SELECT pucharse_date
+		FROM  sales_management S, inserted I
+		WHERE S.id_cus=I.id_cus))
+BEGIN
+	   ROLLBACK
+	   PRINT 'ERROR!!!'
+END
+	ELSE
+	   PRINT'SUCCESSFUL'
+end
+
+
+	insert dbo.sales_management
+	values('','iphone12_64gb','LL/A','16190000')
+
+	
+	
+	
+
+
+
+	alter table sales_management drop foreign key id_cus
+	alter table dbo.sales_management alter column pucharse_date DATETIME NOT NULL DEFAULT(GETDATE())
+	delete from dbo.sales_management where column = 'pucharse_date'
+	drop trigger DK_date
+	alter table dbo.sales_management drop column pucharse_date
+	drop database testnew
+	drop table sales_management
+	drop trigger auto_id
