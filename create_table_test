@@ -4,13 +4,13 @@
 	create table prod_brands(	
 		brand_id int identity not null primary key,
 		brand_name varchar(32) not null,
-		)
+	)
 	create table prod_price(	
 		prod_id int identity not null,
 		prod_name varchar(32) not null,
 		list_price money,
 		primary key(prod_id)
-		)
+	)
 	create table sales_customer(	
 		cus_id int identity not null primary key,
 		cus_name nvarchar(128) not null,
@@ -18,14 +18,14 @@
 		tel varchar (16) not null,
 		mail varchar(32),
 		brith_date date,
-		)
+	)
 	create table sales_cus_rank(	
 		cus_id int identity not null primary key,
 		point_program numeric not null,
 		res_date date,
 		rank_ varchar(16),
 		foreign key(cus_id) references sales_customer(cus_id)
-		)
+	)
 	create table sales_management(
 		prod_id int identity not null,
 		cus_id int not null,
@@ -38,4 +38,4 @@
 		pucharse_date DATETIME NOT NULL DEFAULT(GETDATE()),
 		foreign key(prod_id) references prod_price(prod_id),
 		foreign key(cus_id) references sales_cus_rank(cus_id)
-		)
+	)
