@@ -1,0 +1,52 @@
+	use testnew
+	go
+-- table brands
+INSERT INTO prod_brands(brand_name) VALUES('Samsung')
+INSERT INTO prod_brands(brand_name) VALUES('Apple')
+INSERT INTO prod_brands(brand_name) VALUES('Xiaomi')
+INSERT INTO prod_brands(brand_name) VALUES('Oppo')
+INSERT INTO prod_brands(brand_name) VALUES('Huawei')
+INSERT INTO prod_brands(brand_name) VALUES('Sony')
+INSERT INTO prod_brands(brand_name) VALUES('LG')
+
+-- table price
+
+INSERT INTO prod_price(prod_name, list_price) VALUES('Iphone_11','11900000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Iphone_12','13750000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Iphone_13_pro','23750000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Iphone_13','18850000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('S22','18630000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('S22_ultra','23950000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Sony_Xperia_1','33750000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Oppo_F7','9750000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('Huawei_mate','23750000')
+INSERT INTO prod_price(prod_name, list_price) VALUES('LG_swing','3750000')
+
+-- table cus_rank
+
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('77000732','2020-09-04', 'VIP')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('97000732','2021-05-01', 'VVIP')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('7000732','2022-03-01', 'MEM')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('61000732','2010-09-02', 'Loyal')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('17000732','2011-09-02', 'Loyal')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('5712342','2022-09-02', 'Loyal')
+INSERT INTO sales_cus_rank(point_program, res_date, rank_) VALUES('87000732','2022-09-02', 'VIP')
+
+-- table customer
+
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Ngọc Nguyễn',N'30 ỷ lan', '0124667955','ngocnguyen@gmail.com','1992-09-14')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Tiến Lê', N'220/6 Hoàng hoa thám', '0124667955','tienle@gmail.com','1992-08-9')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Tin Ha', N'18 Ỷ Lan', '08881000666','tinha@gmail.com','1991-02-2')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Tiến Hà', N'220/8 Hoàng hoa thám', '0124345612','tienha@gmail.com','1990-06-9')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Khang Phạm', N'15A Tự Do', '0977749898','phamkhang@gmail.com','1992-01-11')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Elvis Nguyễn', N'28 thạch lam', '0996000800','elvisnguyen@gmail.com','1992-08-18')
+INSERT INTO sales_customer(cus_name,addr,tel,mail,brith_date) 
+VALUES(N'Cherry Lê', N'14 đường 24', '0124892715','cherryle@gmail.com','1993-08-9')
+
+-- table sales_management
