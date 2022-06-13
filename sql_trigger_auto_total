@@ -1,6 +1,13 @@
 create trigger auto_total on dbo.sales_management after insert as
 begin
 	declare @id int
-	select @id = prod_id from inserted
-	update dbo.sales_management set total = quantity * list_price where @id = prod_id
+	select @id = A.prod_id from inserted A, sales_management B where A.prod_id = B.prod_id
+	update dbo.sales_management set total = quantity * list_price 
+end
+
+create trigger auto_total on dbo.sales_management after insert as
+begin
+	declare @id int, @quantity int, @list_price money
+	select @quantity = A.quantity, @list_price = A.list_price from inserted A, sales_management B where A.prod_id = B.prod_id
+	update dbo.sales_management set total = @quantity * @list_price
 end
