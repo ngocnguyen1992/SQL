@@ -4,12 +4,12 @@
 DECLARE @_Ngay_BD DATE ='2013-01-01', 
 	@_Ngay_KT DATE ='2013-01-31'
       
-SELECT Ma_DT, SUM (So_Luong) AS BESTSELLER
+SELECT Ma_DT, SUM (So_Luong) AS So_Luong
 FROM dbo.BanHang
 WHERE Ngay_Ct >= @_Ngay_BD
 	AND Ngay_Ct <= @_Ngay_KT
 GROUP BY Ma_DT
-ORDER BY BESTSELLER DESC
+ORDER BY So_Luong DESC
 
 ---- Thêm cột Ten_DT, từ bảng DmDt
 
