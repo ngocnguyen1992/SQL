@@ -45,8 +45,8 @@ DECLARE @_Ngay_BD DATE ='2013-01-01',
 	@_Ngay_KT DATE ='2013-01-31'
 
 SELECT TOP 10 bh.Ma_DT, 
-MAX (dt.Ten_DT) AS Ten_DT, 
-SUM (bh.Tien) AS Tien
+       MAX (dt.Ten_DT) AS Ten_DT, 
+       SUM (bh.Tien) AS Tien
 FROM dbo.BanHang bh, dbo.DmDt dt
 WHERE bh.Ma_DT = dt.Ma_DT 
       AND Ngay_Ct >= @_Ngay_BD
@@ -62,8 +62,8 @@ DECLARE @_Ngay_BD DATE ='2013-01-01',
 	@_Ngay_KT DATE ='2013-01-31'
 
 SELECT TOP 1 bh.Ma_Vt, 
-MAX(vt.Ten_Vt) AS Ten_Vt, 
-SUM (bh.So_Luong) AS So_Luong
+       MAX(vt.Ten_Vt) AS Ten_Vt, 
+       SUM (bh.So_Luong) AS So_Luong
 FROM dbo.DmVt vt, dbo.BanHang bh
 WHERE vt.Ma_Vt = bh.Ma_Vt
 GROUP BY bh.Ma_Vt 
