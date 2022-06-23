@@ -1,5 +1,5 @@
--- Câu 1 :	Tìm các khách hàng có số lượng mua hàng nhiều nhất 
-            trong khoảng thời gian từ ‘01/01/2013’ đến ‘31/01/2013’
+-- Câu 1 :Tìm các khách hàng có số lượng mua hàng nhiều nhất 
+         trong khoảng thời gian từ ‘01/01/2013’ đến ‘31/01/2013’
 
 DECLARE @_Ngay_BD DATE ='2013-01-01', 
 	@_Ngay_KT DATE ='2013-01-31'
