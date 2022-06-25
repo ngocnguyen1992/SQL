@@ -1,0 +1,16 @@
+-- Câu 1 :Tìm các khách hàng có số lượng mua hàng nhiều nhất 
+--         trong khoảng thời gian từ ‘01/01/2013’ đến ‘31/01/2013’
+
+DECLARE @_Ngay_BD DATE ='2013-01-01', 
+	  	@_Ngay_KT DATE ='2013-01-31'
+  
+SELECT *
+FROM (
+    SELECT MAX(Ngay_Ct) as Ngay_Ct, Ma_DT, SUM(So_Luong) AS So_Luong, 
+    DENSE_RANK () OVER (ORDER BY SUM(So_Luong) DESC) AS Rank_ 
+    FROM dbo.BanHang 
+    WHERE Ngay_Ct >= @_Ngay_BD
+      AND Ngay_Ct <= @_Ngay_KT
+    GROUP BY Ma_DT
+    ) AS bh
+WHERE rank_ = 1
