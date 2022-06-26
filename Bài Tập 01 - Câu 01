@@ -9,8 +9,7 @@ FROM (
     SELECT MAX(Ngay_Ct) as Ngay_Ct, Ma_DT, SUM(So_Luong) AS So_Luong, 
     DENSE_RANK () OVER (ORDER BY SUM(So_Luong) DESC) AS Rank_ 
     FROM dbo.BanHang 
-    WHERE Ngay_Ct >= @_Ngay_BD
-      AND Ngay_Ct <= @_Ngay_KT
+    WHERE Ngay_Ct >= @_Ngay_BD AND Ngay_Ct <= @_Ngay_KT
     GROUP BY Ma_DT
     ) AS bh
 WHERE rank_ = 1
