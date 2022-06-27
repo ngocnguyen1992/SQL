@@ -1,7 +1,7 @@
 -- Tìm mặt hàng bán chạy nhất trong khoảng thời gian từ ‘01/01/2013’ đến ‘31/01/2013’
 
 DECLARE @_Ngay_BD DATE ='2013-01-01', 
-		  @_Ngay_KT DATE ='2013-01-31'
+	 @_Ngay_KT DATE ='2013-01-31'
 
 SELECT TOP 1 WITH TIES bh.Ma_Vt, 
 MAX(vt.Ten_Vt) AS Ten_Vt, 
