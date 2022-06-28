@@ -11,3 +11,16 @@ WHERE vt.Ma_Vt = bh.Ma_Vt
       AND Ngay_Ct >= @_Ngay_BD AND Ngay_Ct <= @_Ngay_KT
 GROUP BY bh.Ma_Vt 
 ORDER BY So_Luong DESC
+
+-- Select ra Ma_Vt, sau khi có mã truy vấn lại lấy Ten_Vt
+
+;WITH tbl AS(
+    SELECT Ma_Vt, SUM(So_Luong) AS So_Luong
+    FROM dbo.BanHang
+    WHERE Ngay_Ct BETWEEN '20130101' AND '20130131' 
+    GROUP BY Ma_Vt
+)
+SELECT b.Ma_Vt, vt.Ten_Vt, b.So_Luong
+FROM tbl b, dbo.DmVt vt
+WHERE So_Luong = (SELECT TOP 1 WITH TIES So_Luong FROM tbl ORDER BY So_Luong DESC)
+	AND b.Ma_Vt = vt.Ma_Vt
