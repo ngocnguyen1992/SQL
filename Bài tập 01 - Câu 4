@@ -1,0 +1,14 @@
+-- Tìm các khách hàng mua hàng liên tiếp n tháng trong năm 2013 
+-- Tìm mặt hàng nằm trong top n liên tiếp n tháng
+--(n: có thể là 2, 3, 4)
+SELECT MONTH (Ngay_Ct) AS Thang, COUNT(Ma_Dt) AS COUNT_Ma_Dt, MAX(Ma_Vt) Ma_Vt, MAX(So_Luong) So_Luong
+FROM dbo.BanHang
+WHERE YEAR(Ngay_Ct) = 2013
+GROUP BY MONTH(Ngay_Ct)
+
+
+SELECT MONTH (Ngay_Ct) AS Thang,  (Ma_Dt) AS Ma_Dt, Ma_Vt, So_Luong
+FROM dbo.BanHang
+WHERE YEAR(Ngay_Ct) = 2013
+ORDER BY Thang ASC
+GROUP BY MONTH(Ngay_Ct), Ma_Dt
