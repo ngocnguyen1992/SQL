@@ -12,3 +12,36 @@ FROM dbo.BanHang
 WHERE YEAR(Ngay_Ct) = 2013
 ORDER BY Thang ASC
 GROUP BY MONTH(Ngay_Ct), Ma_Dt
+
+-- bài chưa xong
+
+SELECT Ngay_Ct, Ma_DT, DENSE_RANK () OVER (PARTITION BY Ma_DT ORDER BY Ngay_Ct ASC) AS Stt
+FROM dbo.BanHang
+GROUP BY Ngay_Ct, Ma_DT
+
+ALTER TABLE dbo.BanHang ADD check_2 int
+
+SELECT ROW_NUMBER () OVER (PARTITION BY Ma_DT ORDER BY Ngay_Ct ASC) AS Stt, Ngay_Ct, Ma_DT
+FROM dbo.BanHang
+
+DECLARE @i date,
+		@j date 
+
+SET @i = (SELECT MIN(Ngay_Ct) FROM dbo.BanHang)
+SET @j = (SELECT DATEADD(MONTH, 1, MIN(Ngay_Ct)) FROM dbo.BanHang)
+WHILE @i <= (SELECT MAX(Ngay_Ct) FROM dbo.BanHang)
+BEGIN
+	--SELECT @i = MIN(Ngay_Ct) FROM dbo.BanHang
+	--SELECT @j = DATEADD(MONTH,1,@i)
+	--SET @i = DATEADD(MONTH,0,@i)
+	IF (DATEDIFF(MONTH, @i, @j)) = 1
+	Begin 
+		UPDATE dbo.BanHang SET check_2 = 1
+	END
+	ELSE IF (DATEDIFF(MONTH, @i, @j)) = 0
+	Begin
+		UPDATE dbo.BanHang SET check_2 = 0
+	END
+	SET @i = DATEADD(MONTH,1,@i)
+	SET @j = DATEADD(MONTH,1,@j)
+END
