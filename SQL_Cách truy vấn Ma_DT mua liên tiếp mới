@@ -1,4 +1,5 @@
-SELECT DISTINCT * FROM #temp_banhang a JOIN #temp_banhang b
+SELECT DISTINCT * 
+FROM #temp_banhang a JOIN #temp_banhang b
 ON DATEDIFF(MONTH, a.Ngay_Ct, b.Ngay_Ct) = 1
 WHERE a.Ma_DT = b.Ma_DT
 ORDER BY a.Ngay_Ct ASC
