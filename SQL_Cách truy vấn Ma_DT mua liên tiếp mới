@@ -1,5 +1,12 @@
-SELECT DISTINCT * 
-FROM #temp_banhang a JOIN #temp_banhang b
+-- Tạo ra bảng tạm
+SELECT Ngay_Ct, Ma_DT
+INTO #temp
+FROM dbo.BanHang
+GROUP BY Ngay_Ct, Ma_DT
+
+-- Lấy bảng tạm a so sánh bảng tạm b với ON là khớp nối DATEDIFF lấy MONTH b.ngày - a.ngày
+SELECT * 
+FROM #temp a JOIN #temp b
 ON DATEDIFF(MONTH, a.Ngay_Ct, b.Ngay_Ct) = 1
 WHERE a.Ma_DT = b.Ma_DT
-ORDER BY a.Ngay_Ct ASC
+ORDER BY a.Ma_DT, a.Ngay_Ct ASC
