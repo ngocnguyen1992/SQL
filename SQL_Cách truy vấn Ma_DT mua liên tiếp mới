@@ -4,7 +4,7 @@ INTO #temp
 FROM dbo.BanHang
 GROUP BY Ngay_Ct, Ma_DT
 
--- Lấy bảng tạm a so sánh bảng tạm b với ON là khớp nối DATEDIFF lấy MONTH b.ngày - a.ngày = 1
+-- Lấy bảng tạm a JOIN bảng tạm b với ON là khớp nối DATEDIFF lấy MONTH b.ngày - a.ngày = 1
 SELECT * 
 FROM #temp a JOIN #temp b
 ON DATEDIFF(MONTH, a.Ngay_Ct, b.Ngay_Ct) = 1
