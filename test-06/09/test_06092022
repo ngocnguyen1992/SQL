@@ -1,0 +1,158 @@
+SELECT (ROW_NUMBER () OVER ( ORDER BY Ma_DT, Ngay_Ct ASC)) AS Stt, Ngay_Ct, Ma_DT 
+INTO #temp 
+FROM dbo.BanHang 
+GROUP BY Ngay_Ct, Ma_DT
+
+--DECLARE @Ma_Dt VARCHAR(100), @Ngay_Ct DATE, @ParamDefinition NVARCHAR(MAX), @sql NVARCHAR(MAX)
+
+/*SET @Ma_Dt ='KH00001'
+--SET @Ngay_Ct = 'SELECT LEAD(Ngay_Ct,1) OVER(ORDER BY Ngay_Ct) Ngay_Ct FROM #temp'
+SELECT  @ParamDefinition= '@Ma_Dt2 VARCHAR(100)' --, @Ngay_Ct2 DATE'
+SET @sql =N'SELECT * FROM #temp WHERE Ma_Dt = @Ma_Dt2 AND Ngay_Ct = @Ngay_Ct2'
+
+EXEC sp_executesql
+	@sql,
+	@ParamDefinition,
+	@Ma_Dt2= @Ma_Dt,
+	@Ngay_Ct2 = @Ngay_Ct*/
+
+	drop table #temp
+
+-- TEST '1', '', ''
+
+CREATE PROCEDURE TEST
+	 @Stt INT, 
+	@Ngay_Ct DATE, 
+	@Ma_DT VARCHAR(32)
+AS
+BEGIN
+	DECLARE @sql NVARCHAR(MAX)
+	SET @sql = 'SELECT * FROM #temp WHERE 1 = 1 '
+	IF @Stt > 0 SET @sql = @sql + ' AND Stt = ' + CONVERT (NVARCHAR(8),@Stt)
+	IF @Ngay_Ct <> '' SET @sql = @sql + ' AND Ngay_Ct = ' + CONVERT (NVARCHAR(10), @Ngay_Ct)
+	IF @Ma_DT <> '' SET @sql = @sql + ' AND Ma_DT LIKE N''' + @Ma_DT + ''''
+PRINT @sql
+EXEC SP_EXECUTESQL @sql
+END
+
+SELECT *, LEAD(Ngay_Ct,1) FROM #temp
+
+-- TEST_NEW '23', '', ''
+
+CREATE PROCEDURE TEST_NEW
+	 @Stt INT, 
+	@Ngay_Ct DATE, 
+	@Ma_DT VARCHAR(32)
+AS
+BEGIN
+	DECLARE @sql NVARCHAR(MAX);
+	SET @sql = 'SELECT *, LEAD(Ngay_Ct,1) OVER(ORDER BY Ngay_Ct) AS #temp_lead FROM #temp WHERE 1 = 1 '
+	IF @Stt > 0 SET @sql = @sql + ' AND Stt = ' + CONVERT (NVARCHAR(8),@Stt)
+	IF @Ma_DT <> '' SET @sql = @sql + ' AND Ma_DT LIKE N''' + @Ma_DT + ''''
+	IF @Ngay_Ct <> '' SET @sql = @sql + ' AND Ngay_Ct = ' + CONVERT (NVARCHAR(10), @Ngay_Ct)
+PRINT @sql
+EXEC SP_EXECUTESQL @sql
+END
+--IF @date_continous > 0 SET @sql = @sql + ' AND DATEDIFF(MONTH, Ngay_Ct, @temp_lead) = ''' + CONVERT (NVARCHAR(MAX), @Ngay_Ct)
+DROP PROCEDURE TEST_NEW
+DROP database #temp
+
+SELECT * FROM #temp
+
+
+-- TEST '1', '', 'KH00001'
+
+CREATE PROCEDURE TEST
+	@Stt INT, 
+	@Ngay_Ct DATE, 
+	@Ma_DT VARCHAR(32),
+	@datediff DATE
+AS
+BEGIN
+	DECLARE @sql NVARCHAR(MAX), @wheresql NVARCHAR(MAX), @parm NVARCHAR(MAX);
+	SET @wheresql = 'WHERE 1 = 1 '
+	SET @sql = 'SELECT * FROM #temp WHERE 1 = 1'
+	SET @datediff = DATEDIFF(MONTH, @Ngay_Ct, @temp_ngay1)= 
+	SET @temp_ngay1 = SELECT LEAD(Ngay_Ct,1) OVER(ORDER BY Ma_DT) FROM #temp
+	IF @Stt > 0 SET @sql = @sql + ' AND Stt = ' + CONVERT (NVARCHAR(8),@Stt)
+	IF @Ngay_Ct <> '' SET @sql = @sql + ' AND Ngay_Ct = ' + CONVERT (NVARCHAR(10), @Ngay_Ct)
+	IF @datediff > 0 SET @sql = @sql + 'AND  = ' '' CONVERT (NVARCHAR(10), @Ngay_Ct, #temp_lead)
+PRINT @sql
+EXEC SP_EXECUTESQL @sql
+END
+
+SELECT * FROM #temp
+
+;WITH tbl AS
+(
+    SELECT Ma_Dt, Ngay_Ct,  
+		 LEAD(Ngay_Ct,1) OVER(ORDER BY Ngay_Ct) AS date2
+    FROM #temp
+)
+SELECT date2, Ma_DT FROM tbl
+WHERE DATEDIFF(MONTH, Ngay_Ct, date2)=1
+GROUP BY date2, Ma_DT
+
+
+/*CREATE TABLE temp (Stt INT, Ma_DT VARCHAR (16), Ngay_Ct DATE)
+INSERT INTO temp(Stt, Ma_DT, Ngay_Ct) SELECT Stt, Ma_DT, Ngay_Ct  FROM #temp*/
+
+CREATE PROCEDURE TEST
+	 @Stt INT, 
+	@Ngay_Ct DATE, 
+	@Ma_DT VARCHAR(32)
+AS
+BEGIN
+	DECLARE @sql NVARCHAR(MAX)
+	SET @sql = 'SELECT * FROM #temp WHERE 1 = 1 '
+	IF @Stt > 0 SET @sql = @sql + ' AND Stt = ' + CONVERT (NVARCHAR(8),@Stt)
+	IF @Ngay_Ct <> '' SET @sql = @sql + ' AND Ngay_Ct = ' + CONVERT (NVARCHAR(10), @Ngay_Ct)
+	IF @Ma_DT <> '' SET @sql = @sql + ' AND Ma_DT LIKE N'' ' + @Ma_DT + ''''
+PRINT @sql
+EXEC SP_EXECUTESQL @sql
+END
+
+
+;WITH tbl AS
+(
+    SELECT  Ngay_Ct, Ma_DT, 
+		 LEAD(Ngay_Ct) OVER(ORDER BY Ngay_Ct) AS date2
+    FROM #temp
+)
+SELECT Ngay_Ct, Ma_DT FROM tbl a
+WHERE DATEDIFF(MONTH, Ngay_Ct, date2)=1 
+GROUP BY Ngay_Ct, Ma_DT
+ORDER BY Ngay_Ct
+
+
+
+
+;WITH tbl AS
+(
+    SELECT  Ngay_Ct, Ma_DT, 
+		 LEAD(Ngay_Ct) OVER(ORDER BY Ngay_Ct) AS date2
+    FROM #temp
+)
+SELECT Ngay_Ct, Ma_DT FROM tbl a
+WHERE DATEDIFF(MONTH, Ngay_Ct, date2)=1 
+AND EXISTS (SELECT Ngay_Ct, Ma_DT FROM tbl b WHERE a.Ma_DT = b.Ma_DT)
+ORDER BY Ngay_Ct
+
+/*SELECT a.Ma_DT, LEAD (a.Ngay_Ct,1) OVER(ORDER BY a.Ngay_Ct) LEAD_Ngay_Ct
+FROM #temp a JOIN #temp b ON DATEDIFF(MONTH, b.Ngay_Ct, a.Ngay_Ct)=1
+WHERE a.Ma_DT = b.Ma_DT
+GROUP BY a.Ma_DT, a.Ngay_Ct, b.Ma_DT, b.Ngay_Ct*/
+
+
+SELECT * FROM #temp WHERE Ma_DT = 'KH00341'
+
+-- test 2 bảng tạm
+;WITH tbl AS
+(
+    SELECT  Ngay_Ct, Ma_DT, 
+		 LEAD(Ngay_Ct) OVER(ORDER BY Ngay_Ct) AS date2
+    FROM #temp
+)
+SELECT * FROM tbl WHERE Ma_DT 
+
+
