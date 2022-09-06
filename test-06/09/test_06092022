@@ -2,21 +2,7 @@ SELECT (ROW_NUMBER () OVER ( ORDER BY Ma_DT, Ngay_Ct ASC)) AS Stt, Ngay_Ct, Ma_D
 INTO #temp 
 FROM dbo.BanHang 
 GROUP BY Ngay_Ct, Ma_DT
-
---DECLARE @Ma_Dt VARCHAR(100), @Ngay_Ct DATE, @ParamDefinition NVARCHAR(MAX), @sql NVARCHAR(MAX)
-
-/*SET @Ma_Dt ='KH00001'
---SET @Ngay_Ct = 'SELECT LEAD(Ngay_Ct,1) OVER(ORDER BY Ngay_Ct) Ngay_Ct FROM #temp'
-SELECT  @ParamDefinition= '@Ma_Dt2 VARCHAR(100)' --, @Ngay_Ct2 DATE'
-SET @sql =N'SELECT * FROM #temp WHERE Ma_Dt = @Ma_Dt2 AND Ngay_Ct = @Ngay_Ct2'
-
-EXEC sp_executesql
-	@sql,
-	@ParamDefinition,
-	@Ma_Dt2= @Ma_Dt,
-	@Ngay_Ct2 = @Ngay_Ct*/
-
-	drop table #temp
+drop table #temp
 
 -- TEST '1', '', ''
 
@@ -137,11 +123,6 @@ SELECT Ngay_Ct, Ma_DT FROM tbl a
 WHERE DATEDIFF(MONTH, Ngay_Ct, date2)=1 
 AND EXISTS (SELECT Ngay_Ct, Ma_DT FROM tbl b WHERE a.Ma_DT = b.Ma_DT)
 ORDER BY Ngay_Ct
-
-/*SELECT a.Ma_DT, LEAD (a.Ngay_Ct,1) OVER(ORDER BY a.Ngay_Ct) LEAD_Ngay_Ct
-FROM #temp a JOIN #temp b ON DATEDIFF(MONTH, b.Ngay_Ct, a.Ngay_Ct)=1
-WHERE a.Ma_DT = b.Ma_DT
-GROUP BY a.Ma_DT, a.Ngay_Ct, b.Ma_DT, b.Ngay_Ct*/
 
 
 SELECT * FROM #temp WHERE Ma_DT = 'KH00341'
