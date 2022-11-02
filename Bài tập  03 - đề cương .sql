@@ -68,7 +68,7 @@ WHILE @_i < 1000
 BEGIN
 	SELECT @_Ma_Ct = 'Ct' + FORMAT(@_i, '0####');
 	SET @_Ngay_Ct = DATEADD(day, ROUND(RAND()*1000, 0), '20130101');
-	SET @_So_Ct = 'BH' + FORMAT(@_i, '0###');
+	SELECT @_So_Ct = 'BH' + FORMAT(@_i, '0###');
 	SELECT @_Ma_Kho = 'KHO' + FORMAT(@_i, '0####');
 	SELECT @_Ma_Dt = 'KH' + FORMAT(@_i, '0####');
 	SELECT @_Ma_Nx = 'Nx' + FORMAT(@_i, '0####');
