@@ -61,7 +61,7 @@ Don_Gia INT, Thanh_Tien INT, Ma_Kho VARCHAR(16), Ma_Dt VARCHAR(16), Ma_Nx VARCHA
 
 DECLARE @_Ma_Ct VARCHAR(16), @_Ngay_Ct DATE, @_So_Ct VARCHAR(20), @_j INT = 1    
     , @_So_Luong NUMERIC(18,2), @_Don_Gia NUMERIC(18), @_Thanh_Tien NUMERIC(18)
-	, @_Ma_Kho VARCHAR(16), @_Ma_Nx VARCHAR(16), @_Ma_Tte VARCHAR(16)
+    , @_Ma_Kho VARCHAR(16), @_Ma_Nx VARCHAR(16), @_Ma_Tte VARCHAR(16)
     , @_Rand INT, @_i INT = 1, @_Ma VARCHAR(16), @_Ma_Dt VARCHAR(16);
 
 WHILE @_i < 1000
@@ -78,7 +78,7 @@ BEGIN
 	SET @_Thanh_Tien = @_Don_Gia * @_So_Luong;
 
     INSERT #tblCt(Ma_Ct, Ngay_Ct, So_Ct, So_Luong, Don_Gia, Thanh_Tien, Ma_Kho, Ma_Dt, Ma_Nx, Ma_Tte) 
-	VALUES(@_Ma_Ct, @_Ngay_Ct, @_So_Ct,@_So_Luong, @_Don_Gia, @_Thanh_Tien, @_Ma_Kho, @_Ma_Dt, @_Ma_Nx, @_Ma_Tte );
+    VALUES(@_Ma_Ct, @_Ngay_Ct, @_So_Ct,@_So_Luong, @_Don_Gia, @_Thanh_Tien, @_Ma_Kho, @_Ma_Dt, @_Ma_Nx, @_Ma_Tte );
     SET @_i +=1;
 END
 
@@ -94,8 +94,8 @@ ALTER TABLE #tblCt ADD Ten_Vt NVARCHAR(64), Ten_Kho NVARCHAR(64), Ten_Dt NVARCHA
 )
     UPDATE tbl
 	SET Ten_Vt = N'Tên Vật Tư ' + FORMAT(_RowNo, '0####')
-		,Ten_Kho = N'Tên Kho ' + FORMAT(_RowNo, '1##1#')
-		, Ten_Dt = N'Tên Khách Hàng ' + FORMAT(_RowNo, '2##2#');
+	    ,Ten_Kho = N'Tên Kho ' + FORMAT(_RowNo, '1##1#')
+	    , Ten_Dt = N'Tên Khách Hàng ' + FORMAT(_RowNo, '2##2#');
 
 
 --12.	Copy dữ liệu của #tblCt qua #CtHdCopy rồi xoá hết dữ liệu của #tblCt.
