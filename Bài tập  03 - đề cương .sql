@@ -119,7 +119,6 @@ FROM #tblCt
 TRUNCATE TABLE #tblCt
 
 SELECT * FROM #CtHdCopy 
-SELECT * FROM dbo.BanHang
 IF OBJECT_ID('tempdb..#CtHdCopy') IS NOT NULL DROP TABLE #CtHdCopy
 
 
