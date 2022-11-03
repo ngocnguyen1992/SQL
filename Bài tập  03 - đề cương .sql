@@ -101,10 +101,10 @@ ALTER TABLE #tblCt ADD Ten_Vt NVARCHAR(64), Ten_Kho NVARCHAR(64), Ten_Dt NVARCHA
 --Lấy dữ liệu từ bảng bán hàng qua bảng #tblCt
 UPDATE #tblCt 
 SET #tblCt.Ngay_Ct = bh.Ngay_Ct
-	, #tblCt.So_Ct = bh.So_Ct
-	, #tblCt.So_Luong = bh.So_Luong
-	, #tblCt.Ma_Dt = bh.Ma_Dt
-	, #tblCt.Thanh_Tien = bh.Tien
+    , #tblCt.So_Ct = bh.So_Ct
+    , #tblCt.So_Luong = bh.So_Luong
+    , #tblCt.Ma_Dt = bh.Ma_Dt
+    , #tblCt.Thanh_Tien = bh.Tien
 FROM (SELECT Id, Ngay_Ct, So_Ct, So_Luong, Ma_Dt, Tien FROM dbo.BanHang) bh
 WHERE bh.Id = #tblCt.Id
 
