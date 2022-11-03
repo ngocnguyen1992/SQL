@@ -34,6 +34,7 @@ WHERE rank_ <= 3
 
 -- Liệt kê các mặt hàng không có người mua trong tháng 9/2014.
 
+--Cách 1
 SELECT Ten_Vt, Ma_Vt 
 FROM dbo.DmVt 
 WHERE Ma_Vt NOT IN (SELECT Ma_Vt FROM dbo.BanHang WHERE MONTH(Ngay_Ct) = 9 AND YEAR(Ngay_Ct) = 2014)
