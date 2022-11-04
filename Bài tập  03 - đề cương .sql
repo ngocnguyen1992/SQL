@@ -117,6 +117,12 @@ INTO #CtHdCopy
 FROM #tblCt
 TRUNCATE TABLE #tblCt
 
+-- Do em thấy Insert Tiền random ko đúng logic nên có thử lấy #CthdCopy.Don_Gia * bh.So_Luong = #CtHdCopy.Thanh_Tien bắt theo So_Ct
+
+--UPDATE #CtHdCopy
+--SET #CtHdCopy.Thanh_Tien = #CtHdCopy.Don_Gia * bh.So_Luong FROM (SELECT So_Luong, So_Ct FROM dbo.BanHang) bh 
+--WHERE #CtHdCopy.So_Ct = bh.So_Ct
+
 SELECT * FROM #CtHdCopy 
 IF OBJECT_ID('tempdb..#CtHdCopy') IS NOT NULL DROP TABLE #CtHdCopy
 
