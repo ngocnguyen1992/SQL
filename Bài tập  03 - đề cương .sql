@@ -54,6 +54,7 @@ FROM dbo.DmNv
 SELECT * FROM #temp 
 WHERE Tuoi >= 55 AND Gioi_Tinh = 'Nam' OR Tuoi >= 50 AND Gioi_Tinh = 'Nu' 
 ORDER BY Ma_Nv
+IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
 
 --Tạo một TABLE tạm #tblCt bằng câu lệnh CREATE gồm các field : Ma_Ct, Ngay_ct, So_Ct, Ma_Vt, So_Luong, Don_Gia, Thanh_tien, Ma_Kho, Ma_Dt, Ma_Nx, Ma_Tte
 --INSERT dữ liệu của các chứng từ hoá đơn, chứng từ nhập mua và chi phí vào bản tạm #tblCt.
