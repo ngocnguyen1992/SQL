@@ -44,8 +44,7 @@ SELECT Ten_Vt, Ma_Vt
 FROM dbo.DmVt 
 WHERE NOT EXISTS (SELECT 1 FROM dbo.BanHang WHERE MONTH(Ngay_Ct) = 9 AND YEAR(Ngay_Ct) = 2014 AND DmVt.Ma_Vt = BanHang.Ma_Vt)
 
-
---7.	Liệt kê ra các nhân viên chờ nghỉ hưu ( nam >=55 và nữ >=50) .
+--Liệt kê ra các nhân viên chờ nghỉ hưu ( nam >=55 và nữ >=50) .
 
 IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
 SELECT Ma_Nv, Ten_Nv, DATEDIFF(YEAR, Ngay_sinh, GETDATE()) AS Tuoi, Gioi_Tinh
@@ -58,7 +57,6 @@ ORDER BY Ma_Nv
 
 --Tạo một TABLE tạm #tblCt bằng câu lệnh CREATE gồm các field : Ma_Ct, Ngay_ct, So_Ct, Ma_Vt, So_Luong, Don_Gia, Thanh_tien, Ma_Kho, Ma_Dt, Ma_Nx, Ma_Tte
 --INSERT dữ liệu của các chứng từ hoá đơn, chứng từ nhập mua và chi phí vào bản tạm #tblCt.
-
 
 SET NOCOUNT ON;
 DROP TABLE IF EXISTS #tblCt
@@ -96,7 +94,7 @@ ALTER TABLE #tblCt ADD Ten_Vt NVARCHAR(64), Ten_Kho NVARCHAR(64), Ten_Dt NVARCHA
 )
     UPDATE tbl
     SET Ten_Vt = N'Tên Vật Tư ' + FORMAT(_RowNo, '0####')
-	,Ten_Kho = N'Tên Kho ' + FORMAT(_RowNo, '1##7#')
+	, Ten_Kho = N'Tên Kho ' + FORMAT(_RowNo, '1##7#')
 	, Ten_Dt = N'Tên Khách Hàng ' + FORMAT(_RowNo, '2##2#');
 
 --Lấy dữ liệu từ bảng bán hàng qua bảng #tblCt
