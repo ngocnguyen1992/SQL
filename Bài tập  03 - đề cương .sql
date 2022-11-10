@@ -14,7 +14,7 @@ SELECT nv.Ten_NV, bh.Ngay_Ct, bh.Ma_Nv, bh.So_Ct
 FROM dbo.BanHang bh JOIN dbo.DmNv nv ON bh.Ma_Nv = nv.Ma_Nv
 WHERE nv.Ten_NV = N'Nguyễn Văn A' AND MONTH(bh.Ngay_Ct)= 9 AND YEAR(Ngay_Ct) = 2013
 
--- Em đã filter Nguyễn Văn A và thêm N'' cho chuỗi tiếng việt có dấu (NVARCHAR) và bỏ GROUP BY nhiều cấp ko cần thiết
+-- Em đã filter Nguyễn Văn A, thêm N'' cho chuỗi tiếng việt có dấu (NVARCHAR) và bỏ GROUP BY nhiều cấp ko cần thiết
 
 ---
 /*Liệt kê ra 3 mặt hàng bán chạy nhất trong tháng 9/2013.*/
@@ -63,10 +63,9 @@ ORDER BY Ma_Nv
 -- Em thêm ngoặc đoạn WHERE (AND) OR (AND)
 
 
+
 --Tạo một TABLE tạm #tblCt bằng câu lệnh CREATE gồm các field : Ma_Ct, Ngay_ct, So_Ct, Ma_Vt, So_Luong, Don_Gia, Thanh_tien, Ma_Kho, Ma_Dt, Ma_Nx, Ma_Tte
 --INSERT dữ liệu của các chứng từ hoá đơn, chứng từ nhập mua và chi phí vào bản tạm #tblCt.
-
-
 
 SET NOCOUNT ON;
 DROP TABLE IF EXISTS #tblCt
@@ -95,6 +94,7 @@ END
 --Dùng câu truy vấn SQL thêm vào bảng #tblCt các filed Ten_Vt, Ten_Kho, Ten_Dt.
 --Update dữ liệu cho các field Ten_Vt, Ten_Kho, Ten_Dt của bảng #tblCt.
 --Lấy dữ liệu từ bảng bán hàng qua bảng #tblCt
+
 ALTER TABLE #tblCt ADD Ten_Vt NVARCHAR(128), Ten_Kho NVARCHAR(128), Ten_Dt NVARCHAR(128)
 
 UPDATE #tblCt 
@@ -106,12 +106,20 @@ SET #tblCt.Ngay_Ct = bh.Ngay_Ct
     , #tblCt.Ma_Vt = bh.Ma_Vt
 FROM (SELECT Id, Ngay_Ct, So_Ct, So_Luong, Ma_Dt, Ma_Vt, Tien FROM dbo.BanHang) bh
 WHERE bh.Id = #tblCt.Id
-
+---
 UPDATE #tblCt
 SET #tblCt.Ten_Kho = wh.Ten_Kho
-FROM (SELECT Ma_Kho, Ten_Kho FROM dbo.WareHouse) wh
+FROM dbo.WareHouse wh
 WHERE #tblCt.Ma_Kho = wh.Ma_Kho
 
+-- Cách 2: Hoặc em delete đoạn SELECT @_Ma_Kho = 'Kho' + FORMAT(@_i, '0####'); và update luôn Ma_Kho, Ten_Kho theo Id
+
+UPDATE #tblCt
+SET #tblCt.Ma_Kho = wh.Ma_Kho
+    ,#tblCt.Ten_Kho = wh.Ten_Kho
+FROM dbo.WareHouse wh
+WHERE #tblCt.Id = wh.Id
+---
 UPDATE #tblCt
 SET #tblCt.Ten_Vt = vt.Ten_Vt
 FROM (SELECT Ten_Vt, Ma_Vt FROM dbo.DmVt) vt
@@ -121,6 +129,7 @@ UPDATE #tblCt
 SET #tblCt.Ten_Dt = dt.Ten_Dt
 FROM (SELECT Ten_Dt, Ma_Dt FROM dbo.DmDt) dt
 WHERE #tblCt.Ma_Dt = dt.Ma_Dt
+-- Em đã update Ten_Vt, Ten_Dt, Ten_Kho theo các danh mục tương ứng (DmVt, DmDt, WareHouse).
 
 --Copy dữ liệu của #tblCt qua #CtHdCopy rồi xoá hết dữ liệu của #tblCt.
 
