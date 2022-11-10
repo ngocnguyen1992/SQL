@@ -4,7 +4,6 @@ SELECT Ngay_Ct, So_Ct, Dien_Giai, Doanh_thu, Thue, Tien
 FROM dbo.BanHang 
 WHERE MONTH(Ngay_Ct) = 9 AND YEAR(Ngay_Ct) = 2013
 ORDER BY Ngay_Ct
-
 -- Em đã lấy 1 số cột theo yêu cầu và format lại đúng quy tắc
 
 ----
@@ -13,7 +12,6 @@ ORDER BY Ngay_Ct
 SELECT nv.Ten_NV, bh.Ngay_Ct, bh.Ma_Nv, bh.So_Ct
 FROM dbo.BanHang bh JOIN dbo.DmNv nv ON bh.Ma_Nv = nv.Ma_Nv
 WHERE nv.Ten_NV = N'Nguyễn Văn A' AND MONTH(bh.Ngay_Ct)= 9 AND YEAR(Ngay_Ct) = 2013
-
 -- Em đã filter Nguyễn Văn A, thêm N'' cho chuỗi tiếng việt có dấu (NVARCHAR) và bỏ GROUP BY nhiều cấp ko cần thiết
 
 ---
@@ -59,10 +57,7 @@ FROM dbo.DmNv
 SELECT * FROM #temp 
 WHERE (Tuoi >= 55 AND Gioi_Tinh = 'Nam') OR (Tuoi >= 50 AND Gioi_Tinh = 'Nu')
 ORDER BY Ma_Nv
-
 -- Em thêm ngoặc đoạn WHERE (AND) OR (AND)
-
-
 
 --Tạo một TABLE tạm #tblCt bằng câu lệnh CREATE gồm các field : Ma_Ct, Ngay_ct, So_Ct, Ma_Vt, So_Luong, Don_Gia, Thanh_tien, Ma_Kho, Ma_Dt, Ma_Nx, Ma_Tte
 --INSERT dữ liệu của các chứng từ hoá đơn, chứng từ nhập mua và chi phí vào bản tạm #tblCt.
