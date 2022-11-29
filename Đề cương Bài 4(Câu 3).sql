@@ -23,20 +23,20 @@ END
 
 INSERT #B30AccDoc (DocDate, DocNo, Description, CustomerCode) 
 VALUES ('011110','001', N'Bán Hàng 01', 'ABC')
-		,('021110','002', N'Bán Hàng 02', 'ABC')
+      ,('021110','002', N'Bán Hàng 02', 'ABC')
 
 INSERT #B30AccDoc (DocDate, DocNo, Description, CustomerCode) 
 VALUES ('010310','003', N'Bán Hàng 03', 'BCD')
-		,('020310','004', N'Bán Hàng 04', 'BCD')
+      ,('020310','004', N'Bán Hàng 04', 'BCD')
 
 INSERT #B30AccDocSales (ItemCode, Quantity, Amount)
 VALUES ('HD', 10, 10000000)
-	 , ('HD', 5, 5000000)
-	 , ('HD', 8, 20000000)
-	 , ('HD', 5, 15000000);
+     , ('HD', 5, 5000000)
+     , ('HD', 8, 20000000)
+     , ('HD', 5, 15000000);
 
 CREATE TABLE #temp (Id INT Identity, No INT, Code VARCHAR(32), DocDate DATE, DocNo VARCHAR(32), Description NVARCHAR(MAX)
-					, Quantity INT, Amount NUMERIC(18,2), Discount NUMERIC(18,2));
+		  , Quantity INT, Amount NUMERIC(18,2), Discount NUMERIC(18,2));
 						
 	INSERT #temp (Code, Description, Quantity, Amount)
 	SELECT ad.CustomerCode, MAX(c.Name), SUM(ads.Quantity), SUM(ads.Amount)
@@ -70,23 +70,23 @@ CREATE TABLE #temp (Id INT Identity, No INT, Code VARCHAR(32), DocDate DATE, Doc
 	SELECT @_Discount_10tr = 10000000, @_Discount_20tr = 20000000;
 	UPDATE #temp
 	SET Discount = CASE WHEN t.Amount < @_Discount_10tr THEN t.Amount * 3 / 100
-						WHEN t.Amount < @_Discount_20tr THEN t.Amount * 5 / 100
-						WHEN t.Amount >= @_Discount_20tr THEN t.Amount * 7 / 100
+			    WHEN t.Amount < @_Discount_20tr THEN t.Amount * 5 / 100
+			    WHEN t.Amount >= @_Discount_20tr THEN t.Amount * 7 / 100
 					END
 	FROM #temp t JOIN #B30AccDocSales ads ON t.Code = ads.ItemCode
 
 	UPDATE #temp 
 	SET Discount = CASE WHEN Description = 'Cty ABC' 
-							THEN (SELECT SUM(Discount) 
-							FROM #temp t JOIN #B30AccDoc ad 
-							ON t.DocNo = ad.DocNo 
-							WHERE ad.CustomerCode = 'ABC')  
-						WHEN Description = 'Cty BCD'
-							THEN (SELECT SUM(Discount) 
-							FROM #temp t JOIN #B30AccDoc ad 
-							ON t.DocNo = ad.DocNo 
-							WHERE ad.CustomerCode = 'BCD')
-					END
+				THEN (SELECT SUM(Discount) 
+				FROM #temp t JOIN #B30AccDoc ad 
+				ON t.DocNo = ad.DocNo 
+				WHERE ad.CustomerCode = 'ABC')  
+			   WHEN Description = 'Cty BCD'
+				THEN (SELECT SUM(Discount) 
+				FROM #temp t JOIN #B30AccDoc ad 
+				ON t.DocNo = ad.DocNo 
+				WHERE ad.CustomerCode = 'BCD')
+	END
 	FROM #temp 
 	WHERE (Code = 'ABC') OR (Code = 'BCD')
 
