@@ -12,19 +12,19 @@ CREATE TABLE #B20Customer (Code VARCHAR(32), Name NVARCHAR(128));
 CREATE TABLE #B20Item (Code VARCHAR(32), Name NVARCHAR(128));
 
 INSERT #B20Customer VALUES ('ABC', N'Cty ABC')
-							, ('BCD', N'Cty BCD');
+			, ('BCD', N'Cty BCD');
 INSERT #B20Item VALUES ('HD', N'Tên HD 1')
-					, ('HD', N'Tên HD 2')
-					, ('HD', N'Tên HD 3')
-					, ('HD', N'Tên HD 4');
+			, ('HD', N'Tên HD 2')
+			, ('HD', N'Tên HD 3')
+			, ('HD', N'Tên HD 4');
 INSERT #B30AccDoc VALUES (1,'011110','001', N'Bán Hàng 01', 'ABC')
-						,(2,'021110','002', N'Bán Hàng 02', 'ABC')
-						,(3,'010310','003', N'Bán Hàng 03', 'BCD')
-						,(4,'020310','004', N'Bán Hàng 04', 'BCD');
+			,(2,'021110','002', N'Bán Hàng 02', 'ABC')
+			,(3,'010310','003', N'Bán Hàng 03', 'BCD')
+			,(4,'020310','004', N'Bán Hàng 04', 'BCD');
 INSERT #B30AccDocSales VALUES (1,'HD', 10, 10000000)
-							, (2,'HD', 5, 5000000)
-							, (3,'HD', 8, 20000000)
-							, (4,'HD', 5, 15000000);
+			, (2,'HD', 5, 5000000)
+			, (3,'HD', 8, 20000000)
+			, (4,'HD', 5, 15000000);
 
 SELECT No, Code, DocDate, DocNo, Description, Quantity, Amount, Discount, Status_
 INTO #temp
@@ -43,9 +43,9 @@ INTO #temp
 		) t
 
 DECLARE @_CustomerCodeABC VARCHAR(5) = 'ABC'
-		,@_CustomerCodeBCD VARCHAR(5) = 'BCD'
-		, @_Discount_10tr NUMERIC(18,2) = 10000000
-		, @_Discount_20tr NUMERIC(18,2) = 20000000;
+	,@_CustomerCodeBCD VARCHAR(5) = 'BCD'
+	, @_Discount_10tr NUMERIC(18,2) = 10000000
+	, @_Discount_20tr NUMERIC(18,2) = 20000000;
 
 INSERT INTO #temp(Code, Description, Quantity, Amount, Status_ )
 SELECT ad.CustomerCode, Name, SUM(ads.Quantity), SUM(ads.Amount), 1
@@ -57,9 +57,9 @@ GROUP BY ad.CustomerCode, Name
 
 UPDATE #temp
 SET Discount = CASE WHEN t.Amount < @_Discount_10tr THEN t.Amount * 0.03
-					WHEN t.Amount < @_Discount_20tr THEN t.Amount * 0.05
-					WHEN t.Amount >= @_Discount_20tr THEN t.Amount * 0.07
-				END
+			WHEN t.Amount < @_Discount_20tr THEN t.Amount * 0.05
+			WHEN t.Amount >= @_Discount_20tr THEN t.Amount * 0.07
+		END
 FROM #temp t 
 	INNER JOIN #B30AccDocSales ads ON t.Code = ads.ItemCode
 
@@ -73,7 +73,7 @@ WHERE Code IN (@_CustomerCodeABC, @_CustomerCodeBCD)
 		
 
 INSERT #temp (Description, Quantity, Amount, Discount, Status_)
-SELECT N'Tổng Cộng : ', SUM(Quantity), SUM(Amount), SUM(Discount), 3
+SELECT N'Tổng Cộng : ', SUM(Quantity), SUM(Amount), SUM(Discount), '3'
 FROM #temp
 WHERE Code IN(@_CustomerCodeABC,  @_CustomerCodeBCD)
 
