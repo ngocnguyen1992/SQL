@@ -26,61 +26,49 @@ INSERT #B30AccDocSales VALUES (1,'HD', 10, 10000000)
 			, (3,'HD', 8, 20000000)
 			, (4,'HD', 5, 15000000);
 
+DECLARE @_CustomerCodeABC VARCHAR(5) = 'ABC'
+	, @_CustomerCodeBCD VARCHAR(5) = 'BCD'
+	, @_Discount_10tr NUMERIC(18,2) = 10000000
+	, @_Discount_20tr NUMERIC(18,2) = 20000000;
 SELECT No, Code, DocDate, DocNo, Description, Quantity, Amount, Discount, Status_
 INTO #temp
 	FROM (
-		SELECT ROW_NUMBER() OVER(PARTITION BY ad.CustomerCode ORDER BY ad.Id) AS No
-			, DENSE_RANK() OVER(ORDER BY ad.CustomerCode ASC) AS Status_
-			, ads.ItemCode AS Code
-			, ad.DocDate AS DocDate
-			, ad.DocNo AS DocNo
-			, ad.Description AS Description
-			, ads.Quantity AS Quantity
-			, ads.Amount AS Amount
-			, CAST(0 AS NUMERIC(18,2)) AS Discount
+	SELECT ROW_NUMBER() OVER(PARTITION BY ad.CustomerCode ORDER BY ad.Id) AS No
+		, DENSE_RANK() OVER(ORDER BY ad.CustomerCode ASC) AS Status_
+		, ads.ItemCode AS Code
+		, ad.DocDate AS DocDate
+		, ad.DocNo AS DocNo
+		, ad.Description AS Description
+		, ads.Quantity AS Quantity
+		, ads.Amount AS Amount
+		, CASE 
+			WHEN ads.Amount < @_Discount_10tr THEN ads.Amount * 0.03
+			WHEN ads.Amount < @_Discount_20tr THEN ads.Amount * 0.05
+			WHEN ads.Amount >= @_Discount_20tr THEN ads.Amount * 0.07
+		  END AS Discount
 		FROM #B30AccDoc ad 
 			JOIN #B30AccDocSales ads ON ad.Id = ads.Id
 		) t
 
-DECLARE @_CustomerCodeABC VARCHAR(5) = 'ABC'
-	,@_CustomerCodeBCD VARCHAR(5) = 'BCD'
-	, @_Discount_10tr NUMERIC(18,2) = 10000000
-	, @_Discount_20tr NUMERIC(18,2) = 20000000;
-
-INSERT INTO #temp(Code, Description, Quantity, Amount, Status_ )
-SELECT ad.CustomerCode, Name, SUM(ads.Quantity), SUM(ads.Amount), 1
+INSERT INTO #temp(Code, Description, Quantity, Amount, Discount, Status_ )
+SELECT ad.CustomerCode, Name, SUM(t1.Quantity), SUM(t1.Amount), SUM(t1.Discount), 1
 FROM #B20Customer c 
 	INNER JOIN #B30AccDoc ad ON c.Code = ad.CustomerCode  
-	INNER JOIN #B30AccDocSales ads ON ad.Id = ads.Id
+	INNER JOIN #temp t1 ON ad.DocNo = t1.DocNo
 WHERE ad.CustomerCode IN(@_CustomerCodeABC, @_CustomerCodeBCD)
 GROUP BY ad.CustomerCode, Name
-
-UPDATE #temp
-SET Discount = CASE WHEN t.Amount < @_Discount_10tr THEN t.Amount * 0.03
-			WHEN t.Amount < @_Discount_20tr THEN t.Amount * 0.05
-			WHEN t.Amount >= @_Discount_20tr THEN t.Amount * 0.07
-		END
-FROM #temp t 
-	INNER JOIN #B30AccDocSales ads ON t.Code = ads.ItemCode
-
-UPDATE #temp 
-SET Discount = t.Discount
-FROM (SELECT ISNULL(SUM(Discount), 0) AS Discount
-	FROM #temp t1 
-		INNER JOIN #B30AccDoc ad ON t1.DocNo = ad.DocNo
-	GROUP BY ad.CustomerCode) t
-WHERE Code IN (@_CustomerCodeABC, @_CustomerCodeBCD)
-		
 
 INSERT #temp (Description, Quantity, Amount, Discount, Status_)
 SELECT N'Tổng Cộng : ', SUM(Quantity), SUM(Amount), SUM(Discount), '3'
 FROM #temp
 WHERE Code IN(@_CustomerCodeABC,  @_CustomerCodeBCD)
 
-SELECT No, Code, DocDate, DocNo, Description, Quantity, Amount, Discount, IIF(Code =  @_CustomerCodeBCD, 2, Status_) Status_
+SELECT No, Code, DocDate, DocNo, Description, Quantity, Amount
+	, CAST(Discount AS NUMERIC(18,2)) Discount
+	, IIF(Code = 'BCD', 2, Status_) Status_
 INTO #t2
 FROM #temp 
 
 SELECT No, Code, DocDate, DocNo, Description, Quantity, Amount, Discount
 FROM #t2
-ORDER BY Status_, Code
+ORDER BY Status_, No
