@@ -8,12 +8,12 @@ DROP TABLE IF EXISTS #VoucherTmp;
 
 CREATE TABLE #B20Item (Code VARCHAR(24), Name NVARCHAR(64));
 CREATE TABLE #B30WareHouse(Code VARCHAR(24), Name NVARCHAR(64));
-CREATE TABLE #B30OpenInventory(WareHouseCode VARCHAR(24), ItemCode VARCHAR(24), DocDate DATE, Quantity NUMERIC(18,0));
+CREATE TABLE #B30OpenInventory(WareHouseCode VARCHAR(24), ItemCode VARCHAR(24), Year_ DATE, Quantity NUMERIC(18,0));
 CREATE TABLE #Voucher(DocGroup VARCHAR(1), DocDate DATE, Description NVARCHAR(256), WareHouseCode VARCHAR(24), ItemCode VARCHAR(24), Quantity NUMERIC(18, 0))
 
 DECLARE @_i INT = 1
 	, @_ItemCode VARCHAR(24)
-	, @_WareHouseCode VARCHAR(24)
+	, @_WareHouseCode VARCHAR(24) = 'HCM'
 	, @_Name NVARCHAR(64)
 	, @_DocDate DATE
 	, @_Quantity NUMERIC(18, 0);
@@ -27,15 +27,13 @@ SELECT 'HCM', N'Kho HCM'
 WHILE @_i < 21
 BEGIN 
 	-- Item random
-	SELECT @_ItemCode = CONCAT('I', CAST(ROUND(RAND()*100, 2) AS INT))
+	SELECT @_ItemCode = CONCAT('IT', CAST(ROUND(RAND()*49, 2) AS INT))
 		, @_Name = CONCAT(N'Tên Item ', @_ItemCode)
 	INSERT #B20Item VALUES(@_ItemCode, @_Name);
 	
 	-- Tạo bảng Đầu Kỳ
-	SELECT @_DocDate = DATEADD(DAY, ROUND(RAND()*300, 0), '20230101')
-		, @_Quantity = ROUND(RAND() * 500, 0)
-	INSERT #B30OpenInventory VALUES ('HN', @_ItemCode, @_DocDate, @_Quantity)
-	INSERT #B30OpenInventory VALUES ('HCM', @_ItemCode, @_DocDate, @_Quantity)
+	INSERT #B30OpenInventory VALUES ('HN', @_ItemCode, '2023', ROUND(RAND() * 100, 0))
+	INSERT #B30OpenInventory VALUES ('HCM', @_ItemCode, '2023', ROUND(RAND() * 100, 0))
 	
 	-- Tạo bảng Phát sinh mặt hàng và dữ liệu nhâp - xuất
 	INSERT #Voucher VALUES ('1', DATEADD(DAY, ROUND(RAND()*300, 0), '20230101'), N'Nhập Kho HN', 'HN', @_ItemCode, ROUND(RAND() * 500, 0))
@@ -44,21 +42,30 @@ BEGIN
 	INSERT #Voucher VALUES ('2', DATEADD(DAY, ROUND(RAND()*300, 0), '20230101'), N'Xuất Kho HCM', 'HCM', @_ItemCode, ROUND(RAND() * 500, 0))
 	SET @_i+=1;
 END
+-- Bắt Đầu (Giả sử đầu kỳ bắt đầu từ Tháng 02/2023)
+DECLARE @_DocDate1 DATE
+		, @_DocDate2 DATE
+		, @_FristDate DATE
 
--- Số liệu đầu kỳ
+SELECT @_DocDate1 = '20230201'
+		,@_DocDate2 = '20231231'
+		,@_FristDate = '20230101'
+
+-- Số liệu đầu kỳ(lấy số liệu > Ngày đầu năm AND < Ngày Đầu Kỳ)
 SELECT WareHouseCode, ItemCode, SUM(Quantity) Quantity
 INTO #OpenInventoryTmp
 FROM (
 	SELECT WareHouseCode, ItemCode, Quantity
-		FROM #B30OpenInventory
-		WHERE DocDate BETWEEN '20230101' AND '20231231' AND WareHouseCode = 'HCM'
-	UNION ALL 
+	FROM #B30OpenInventory
+	WHERE Year_ = '2023' AND WareHouseCode = @_WareHouseCode
+	UNION ALL
 	SELECT WareHouseCode, ItemCode, IIF(DocGroup = '1', SUM(Quantity), -SUM(Quantity)) AS Quantity
-		FROM #Voucher
-		WHERE DocDate BETWEEN '20230101' AND '20231231' AND WareHouseCode = 'HCM'
-		GROUP BY WareHouseCode, ItemCode, DocGroup
-)tmp 
+	FROM #Voucher
+	WHERE DocDate < @_DocDate1 AND DocDate >= @_FristDate AND WareHouseCode = @_WareHouseCode
+	GROUP BY WareHouseCode, ItemCode, DocGroup
+) t
 GROUP BY WareHouseCode, ItemCode
+
 -- Số liệu Phát Sinh
 SELECT DocGroup, WareHouseCode, ItemCode, DocDate, Description
 	, IIF(DocGroup = '1', Quantity, 0) AS ReceiptQuantity
@@ -67,14 +74,16 @@ SELECT DocGroup, WareHouseCode, ItemCode, DocDate, Description
 	, CAST('1' AS VARCHAR(1)) AS Status_
 INTO #VoucherTmp
 FROM #Voucher 
-WHERE DocDate BETWEEN '20230101' AND '20231231' AND WareHouseCode = 'HCM'
-
-ALTER TABLE #VoucherTmp ALTER COLUMN DocGroup CHAR(1) NULL
-ALTER TABLE #VoucherTmp ALTER COLUMN DocDate DATE NULL
+WHERE DocDate BETWEEN @_DocDate1 AND @_DocDate2 AND WareHouseCode = @_WareHouseCode
 
 INSERT #VoucherTmp (DocDate, Description, WarehouseCode, ItemCode, Status_, CloseInventory)
 SELECT NULL, N'TỒN ĐẦU KỲ', WarehouseCode, ItemCode, '0', Quantity
 FROM #OpenInventoryTmp
+
+-- trường hợp đã kiểm kê và thống nhất số dư đầu kỳ
+--INSERT #VoucherTmp (DocDate, Description, WarehouseCode, ItemCode, Status_, CloseInventory)
+--SELECT NULL, N'TỒN ĐẦU KỲ', WarehouseCode, ItemCode, '0', Quantity
+--FROM #B30OpenInventory
 
 INSERT #VoucherTmp (Description, WareHouseCode, ItemCode, Status_, ReceiptQuantity, DeliveryQuantity)
 SELECT N'TỔNG NHẬP - XUẤT', WareHouseCode, ItemCode, '2', SUM(ReceiptQuantity), SUM(DeliveryQuantity)
@@ -87,11 +96,11 @@ SELECT N'TỒN CUỐI KỲ', WareHouseCode, ItemCode, '3'
 FROM #VoucherTmp
 GROUP BY WarehouseCode, ItemCode
 
-SELECT Status_, WarehouseCode, ItemCode, Description, DocDate, ReceiptQuantity, DeliveryQuantity, DocGroup,
-		IIF(Status_ = '2', 0, SUM(IIF(Status_ BETWEEN 0 AND 1, ISNULL(CloseInventory, 0) + ISNULL(ReceiptQuantity, 0) - ISNULL(DeliveryQuantity, 0), 0))
+SELECT Status_, WarehouseCode, ItemCode, Description, DocDate, ReceiptQuantity, DeliveryQuantity
+	, IIF(Status_ = '2', 0, SUM(IIF(Status_ BETWEEN 0 AND 1, ISNULL(CloseInventory, 0) + ISNULL(ReceiptQuantity, 0) - ISNULL(DeliveryQuantity, 0), 0))
 			OVER (PARTITION BY WarehouseCode, ItemCode ORDER BY WarehouseCode, ItemCode, Status_, DocDate, DocGroup)) CloseInventory
 FROM #VoucherTmp 
-ORDER BY WarehouseCode, ItemCode, Status_, DocGroup, DocDate
+ORDER BY WarehouseCode, ItemCode, Status_, DocDate, DocGroup
 
 --SELECT * FROM #VoucherTmp ORDER BY WareHouseCode, ItemCode, Status_, DocGroup
 
