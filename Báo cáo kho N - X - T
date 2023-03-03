@@ -67,7 +67,7 @@ SELECT DocGroup, WareHouseCode, ItemCode, MAX(Description) Description
 	, CAST('1' AS VARCHAR(1)) AS Status_
 INTO #VoucherTmp
 FROM #Voucher 
-WHERE DocDate BETWEEN '20220201' AND '20220331' AND WareHouseCode = 'HCM'
+WHERE DocDate BETWEEN '20220201' AND '20220228' AND WareHouseCode = 'HCM'
 GROUP BY WareHouseCode, ItemCode, DocGroup
 
 INSERT #VoucherTmp (WareHouseCode, ItemCode, Description, CloseInventory, Status_)
